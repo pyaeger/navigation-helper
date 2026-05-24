@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navigation Trainer</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #eef3ff;
+  font-size: 18px;
+}
+
+.bigMode { font-size: 26px !important; }
+
+.header {
+  background: #173b73;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.container { padding: 20px; }
+
+.card {
+  background: white;
+  padding: 18px;
+  margin: 12px 0;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  margin-top: 10px;
+  background: #173b73;
+  color: white;
+  border: none;
+  border-radius: 12px;
+}
+
+.secondary { background: #4caf50; }
+.warning { background: #e53935; }
+
+.map {
+  width: 100%;
+  height: 220px;
+  background: #dbe8ff;
+  border-radius: 12px;
+  position: relative;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.start { background: green; top: 70%; left: 20%; }
+.end { background: red; top: 30%; left: 70%; }
+.user {
+  background: blue;
+  top: 70%;
+  left: 20%;
+  transition: all 1s linear;
+}
+
+.route {
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  width: 50%;
+  height: 4px;
+  background: blue;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Navigation Training
+</div>
+
+<div class="container">
+
+<!-- SONG -->
+<div class="card">
+  <h3>Welcome</h3>
+  <p>Press play, then begin.</p>
+
+  <audio controls style="width:100%;">
+    <source src="your-song-file.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<!-- TRAINER -->
+<div class="card" id="stepText">
+Press Start to begin.
+</div>
+
+<button onclick="nextStep()">Start / Next</button>
+<button onclick="confirmStep()" class="secondary">I Did This</button>
+<button onclick="toggleBig()">Bigger Text</button>
+
+<div class="card">
+<button onclick="openMaps()">Open Google Maps</button>
+<button onclick="practiceRoute()">Practice Route</button>
+</div>
+
+<!-- MAP -->
+<div class="map">
+  <div class="dot start"></div>
+  <div class="dot end"></div>
+  <div class="dot user" id="userDot"></div>
+  <div class="route"></div>
+</div>
+
+<!-- PROBLEMS -->
+<div class="card">
+<h3>If Something Goes Wrong</h3>
+
+<button class="warning" onclick="wrongRoute()">Driver going wrong way</button>
+<button class="warning" onclick="wrongPickup()">Wrong pickup</button>
+<button class="warning" onclick="wrongDestination()">Wrong destination</button>
+<button class="warning" onclick="feelUnsafe()">Feel unsafe</button>
+</div>
+
+</div>
+
+<script>
+let step = 0;
+let confirmed = false;
+
+const steps = [
+  "Open Google Maps. Tap the search bar.",
+  "Type your destination clearly.",
+  "Tap Directions.",
+  "Press Start.",
+  "Watch the blue line.",
+  "Make sure the car follows the route.",
+  "Check the building before exiting."
+];
+
+function nextStep() {
+  if (!confirmed && step !== 0) {
+    alert("Press 'I Did This' first.");
+    return;
+  }
+
+  if (step < steps.length) {
+    setText(steps[step]);
+    speak(steps[step]);
+    confirmed = false;
+
+    if (step === 4) simulateMovement();
+
+    step++;
+  } else {
+    setText("Training complete. You are ready.");
+    speak("Training complete.");
+  }
+}
+
+function confirmStep() {
+  confirmed = true;
+}
+
+function setText(t) {
+  document.getElementById("stepText").innerText = t;
+}
+
+function toggleBig() {
+  document.body.classList.toggle("bigMode");
+}
+
+function openMaps() {
+  window.location.href = "https://maps.google.com";
+}
+
+function practiceRoute() {
+  window.location.href = "https://maps.google.com/?q=704+Central+Ave+Louisville+KY";
+}
+
+function simulateMovement() {
+  let dot = document.getElementById("userDot");
+  setTimeout(()=>{ dot.style.top="50%"; dot.style.left="40%"; }, 1000);
+  setTimeout(()=>{ dot.style.top="40%"; dot.style.left="55%"; }, 2000);
+  setTimeout(()=>{ dot.style.top="30%"; dot.style.left="70%"; }, 3000);
+}
+
+/* PROBLEMS */
+function wrongRoute() {
+  setText("Say: Are we going to my destination?");
+  speak("Ask if you are going the right way.");
+}
+
+function wrongPickup() {
+  setText("Move to a better pickup spot.");
+  speak("Move somewhere visible.");
+}
+
+function wrongDestination() {
+  setText("Tell driver immediately.");
+  speak("Tell them the destination is wrong.");
+}
+
+function feelUnsafe() {
+  setText("Call for help if needed.");
+  speak("If unsafe, call for help.");
+}
+
+/* VOICE */
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
+  }
+}
+</script>
+
+</body>
+</html>
