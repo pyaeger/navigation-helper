@@ -43,3 +43,9 @@ Verified by reading the source, September 2026.
 ## Files
 
 - `index.html` — the entire app (markup, styles, logic)
+- `LICENSE` — MIT
+
+## License
+
+**MIT.** One file, no media, no third-party assets — nothing here needs a
+carve-out. See [LICENSE](LICENSE).
